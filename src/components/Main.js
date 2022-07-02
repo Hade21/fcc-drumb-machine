@@ -2,14 +2,17 @@ import React, { useEffect, useState } from "react";
 
 //data
 import data from "../data/data.json";
+
+//components
 import Pads from "./Pads";
 
 const Main = () => {
   const bankData = data[0].data;
   const [list, setList] = useState(bankData.bankOne);
-  const [bank, setBank] = useState(true);
+  const [bank, setBank] = useState(false);
   const [power, setPower] = useState(false);
   const [volume, setVolume] = useState(50);
+  const [display, setDisplay] = useState("");
 
   const handleChecked = (e) => {
     if (e.target.id === "power-toggle") {
@@ -17,24 +20,29 @@ const Main = () => {
     } else {
       setBank(e.target.checked);
     }
-    console.log(bank, power);
   };
 
   const handleVolume = (e) => {
     setVolume(e.target.value);
+    setDisplay(`Volume : ${e.target.value}`);
   };
 
   useEffect(() => {
     if (bank) {
       setList(bankData.bankTwo);
+      setDisplay("Smooth Piano Kit");
     } else {
       setList(bankData.bankOne);
+      setDisplay("Heater Kit");
     }
   }, [bank, bankData.bankOne, bankData.bankTwo]);
 
   return (
-    <div className="wrapper border-2 border-orange-500" id="drum-machine">
-      <div className="pads-wrapper grid grid-cols-3 grid-rows-3 gap-3 w-4/5">
+    <div
+      className="wrapper border-2 border-orange-500 flex gap-5 justify-between p-4"
+      id="drum-machine"
+    >
+      <div className="pads-wrapper grid grid-cols-3 grid-rows-3 gap-3 w-3/5">
         {list.map((item) => {
           return (
             <Pads
@@ -43,15 +51,17 @@ const Main = () => {
               keyCode={item.keyCode}
               power={power}
               volume={volume}
+              setDisplay={setDisplay}
+              key={item.id}
             >
               {item.keyTrigger}
             </Pads>
           );
         })}
       </div>
-      <div className="control">
+      <div className="control w-2/5 grid gap-y-4">
         <div className="power">
-          <h3 className="title">Power</h3>
+          <h3 className="title font-serif font-bold text-xl mb-2">Power</h3>
           <div className="flex justify-center">
             <label
               htmlFor="power-toggle"
@@ -67,13 +77,13 @@ const Main = () => {
             </label>
           </div>
         </div>
-        <div className="display">
-          <h3 className="innerText"></h3>
+        <div className="display bg-slate-300 rounded-lg px-6 py-4" id="display">
+          <h3 className="innerText text-base font-sans font-bold">{display}</h3>
         </div>
         <div className="volume-slider">
           <label
             htmlFor="volume-range"
-            className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+            className="block mb-2 text-base font-sans font-bold"
           >
             Volume
           </label>
@@ -85,8 +95,8 @@ const Main = () => {
             onChange={handleVolume}
           />
         </div>
-        <div className="power">
-          <h3 className="title">Bank</h3>
+        <div className="bank">
+          <h3 className="title text-base font-sans font-bold mb-2">Bank</h3>
           <div className="flex justify-center">
             <label
               htmlFor="bank-toggle"
